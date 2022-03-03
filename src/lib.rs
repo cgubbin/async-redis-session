@@ -129,13 +129,18 @@ impl SessionStore for RedisSessionStore {
     async fn store_session(&self, session: Session) -> Result<Option<String>> {
         let id = self.prefix_key(session.id());
         let string = serde_json::to_string(&session)?;
-
+        println!("The connection string: {:?}", &string);
         let mut connection = self.connection().await?;
+        println!("Got the connection");
 
         match session.expires_in() {
-            None => connection.set(id, string).await?,
+            None => {
+                println!("Setting the connection");
+                connection.set(id, string).await?
+            }
 
             Some(expiry) => {
+                println!("Setting the connection on expiry");
                 connection
                     .set_ex(id, string, expiry.as_secs() as usize)
                     .await?
