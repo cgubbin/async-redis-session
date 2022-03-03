@@ -349,4 +349,15 @@ mod tests {
 
         Ok(())
     }
+
+    #[tokio::test]
+    async fn test_managed_redis() {
+        let conn_str = "rediss://default:fTXQLsYH4253goYK@db-redis-fra1-81487-do-user-10586280-0.b.db.ondigitalocean.com:25061";
+        let store = RedisSessionStore::new(conn_str).unwrap();
+
+        let mut connection = store.connection().await;
+        if let Err(e) = connection {
+            dbg!(e);
+        }
+    }
 }
